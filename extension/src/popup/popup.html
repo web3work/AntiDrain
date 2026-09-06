@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AntiDrain — Wallet Rescue</title>
+  <style>
+    :root {
+      --bg-base: #0B0E17;
+      --bg-surface: #121724;
+      --bg-card: #171E2D;
+      --bg-card-hover: #1D263B;
+      --bg-input: #0F1420;
+      --border-subtle: rgba(255, 255, 255, 0.07);
+      --border-focus: #6366F1;
+      --border-hover: rgba(99, 102, 241, 0.35);
+      
+      --text-main: #FFFFFF;
+      --text-muted: #94A3B8;
+      --text-dim: #64748B;
+      
+      --accent-phantom: #6366F1;
+      --accent-phantom-hover: #4F46E5;
+      --accent-green: #10B981;
+      --accent-green-bg: rgba(16, 185, 129, 0.12);
+      --accent-green-border: rgba(16, 185, 129, 0.3);
+      --accent-red: #EF4444;
+      --accent-red-bg: rgba(239, 68, 68, 0.12);
+      --accent-red-border: rgba(239, 68, 68, 0.3);
+      --accent-amber: #F59E0B;
+      --accent-amber-bg: rgba(245, 158, 11, 0.12);
+      --accent-amber-border: rgba(245, 158, 11, 0.3);
+      --accent-blue: #38BDF8;
+
+      --radius-xl: 18px;
+      --radius-lg: 14px;
+      --radius-md: 10px;
+      --radius-sm: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      width: 380px;
+      min-height: 570px;
+      background: var(--bg-base);
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", Roboto, sans-serif;
+      font-size: 13px;
+      line-height: 1.5;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Phantom-style subtle radial ambient light */
+    body::before {
+      content: "";
+      position: absolute;
+      top: -60px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 280px;
+      height: 160px;
+      background: radial-gradient(ellipse, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ─── Header Bar ─────────────────────────────────────── */
+    header {
+      position: relative;
+      z-index: 10;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(18, 23, 36, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      user-select: none;
+    }
+
+    .brand-logo {
+      width: 28px;
+      height: 28px;
+      flex-shrink: 0;
+    }
+
+    .brand-title {
+      font-weight: 700;
+      font-size: 15px;
+      letter-spacing: -0.3px;
+      color: #FFFFFF;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .brand-badge {
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      background: rgba(99, 102, 241, 0.15);
+      color: #A5B4FC;
+      padding: 2px 6px;
+      border-radius: 6px;
+      letter-spacing: 0.5px;
+      border: 1px solid rgba(99, 102, 241, 0.25);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .network-pill {
+      background: var(--bg-card);
+      color: var(--text-main);
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      padding: 5px 10px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      outline: none;
+      transition: all 0.2s;
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 8px center;
+      background-size: 12px;
+      padding-right: 24px;
+    }
+    .network-pill:hover, .network-pill:focus {
+      border-color: var(--border-hover);
+      background-color: var(--bg-card-hover);
+    }
+
+    .btn-icon {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-icon:hover {
+      color: #FFFFFF;
+      border-color: var(--border-hover);
+      background: var(--bg-card-hover);
+    }
+
+    /* ─── Main Content Container ─────────────────────────── */
+    main {
+      position: relative;
+      z-index: 1;
+      flex: 1;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* ─── Cards & Surfaces ───────────────────────────────── */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Phantom-Style Hero Status Banner */
+    .hero-banner {
+      border-radius: var(--radius-lg);
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      border: 1px solid transparent;
+      transition: all 0.2s;
+    }
+    .hero-banner.armed {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(16, 185, 129, 0.04) 100%);
+      border-color: var(--accent-green-border);
+    }
+    .hero-banner.incomplete {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(245, 158, 11, 0.04) 100%);
+      border-color: var(--accent-amber-border);
+    }
+
+    .hero-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .hero-icon.armed {
+      background: var(--accent-green-bg);
+      color: var(--accent-green);
+      border: 1px solid var(--accent-green-border);
+    }
+    .hero-icon.incomplete {
+      background: var(--accent-amber-bg);
+      color: var(--accent-amber);
+      border: 1px solid var(--accent-amber-border);
+    }
+
+    .hero-text { flex: 1; }
+    .hero-title {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: -0.2px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .hero-title.armed { color: #34D399; }
+    .hero-title.incomplete { color: #FBBF24; }
+    .hero-desc {
+      font-size: 11px;
+      color: var(--text-muted);
+      line-height: 1.4;
+      margin-top: 2px;
+    }
+
+    /* ─── Role Cards ─────────────────────────────────────── */
+    .role-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: all 0.2s;
+    }
+    .role-card:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--border-hover);
+      transform: translateY(-1px);
+    }
+
+    .role-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .role-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .role-avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 17px;
+      flex-shrink: 0;
+    }
+    .role-avatar.victim { background: var(--accent-red-bg); border: 1px solid var(--accent-red-border); }
+    .role-avatar.safe { background: var(--accent-green-bg); border: 1px solid var(--accent-green-border); }
+    .role-avatar.sponsor { background: rgba(99, 102, 241, 0.15); border: 1px solid rgba(99, 102, 241, 0.3); }
+
+    .role-name {
+      font-weight: 700;
+      font-size: 13px;
+      color: #FFFFFF;
+    }
+    .role-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* Status Pill Badges */
+    .pill {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      letter-spacing: 0.2px;
+    }
+    .pill-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+    }
+    .pill.green { background: var(--accent-green-bg); color: #34D399; border: 1px solid var(--accent-green-border); }
+    .pill.green .pill-dot { background: #34D399; box-shadow: 0 0 6px #34D399; }
+    
+    .pill.red { background: var(--accent-red-bg); color: #F87171; border: 1px solid var(--accent-red-border); }
+    .pill.red .pill-dot { background: #F87171; box-shadow: 0 0 6px #F87171; }
+
+    .pill.purple { background: rgba(99, 102, 241, 0.15); color: #A5B4FC; border: 1px solid rgba(99, 102, 241, 0.3); }
+    .pill.purple .pill-dot { background: #818CF8; box-shadow: 0 0 6px #818CF8; }
+
+    .pill.gray { background: rgba(148, 163, 184, 0.1); color: var(--text-muted); border: 1px solid rgba(148, 163, 184, 0.2); }
+    .pill.gray .pill-dot { background: var(--text-dim); }
+
+    /* Address Chip Container */
+    .role-address-bar {
+      background: var(--bg-input);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .addr-text {
+      font-family: "SF Mono", Consolas, Monaco, monospace;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-main);
+      letter-spacing: 0.3px;
+    }
+    .addr-empty {
+      font-size: 11px;
+      color: var(--text-dim);
+      font-style: italic;
+    }
+
+    .btn-action {
+      background: transparent;
+      border: none;
+      color: #A5B4FC;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      transition: background 0.15s;
+    }
+    .btn-action:hover {
+      background: rgba(99, 102, 241, 0.12);
+      color: #FFFFFF;
+    }
+
+    /* ─── Buttons ────────────────────────────────────────── */
+    .btn {
+      background: linear-gradient(135deg, var(--accent-phantom) 0%, var(--accent-phantom-hover) 100%);
+      color: #FFFFFF;
+      border: none;
+      border-radius: var(--radius-md);
+      padding: 12px 18px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s;
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
+    }
+    .btn:hover {
+      filter: brightness(1.1);
+      transform: translateY(-1px);
+    }
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .btn-green {
+      background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+    }
+    .btn-danger {
+      background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
+    }
+    .btn-secondary {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      box-shadow: none;
+    }
+    .btn-secondary:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--border-hover);
+    }
+    .btn-full { width: 100%; }
+
+    /* ─── Inputs ─────────────────────────────────────────── */
+    input[type="text"], input[type="password"] {
+      background: var(--bg-input);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 11px 14px;
+      color: var(--text-main);
+      font-size: 13px;
+      width: 100%;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    input[type="text"]:focus, input[type="password"]:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+    }
+    input::placeholder { color: var(--text-dim); }
+
+    /* In-Sheet Error Message Banner (Replaces ugly alert()) */
+    .sheet-error {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      border-radius: var(--radius-sm);
+      padding: 8px 12px;
+      font-size: 11px;
+      color: #FCA5A5;
+      line-height: 1.4;
+      display: none;
+    }
+    .sheet-error.visible {
+      display: block;
+    }
+
+    /* Derived Address Chip */
+    .derived-box {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: var(--radius-sm);
+      padding: 8px 12px;
+      font-size: 11px;
+      color: #34D399;
+      word-break: break-all;
+      display: none;
+    }
+    .derived-box.visible {
+      display: block;
+    }
+
+    /* ─── Phantom-Style Slide-Up Bottom Sheet ───────────── */
+    .modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(6px);
+      z-index: 50;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+    .modal-backdrop.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .bottom-sheet {
+      background: var(--bg-surface);
+      border-top: 1px solid var(--border-subtle);
+      border-radius: 20px 20px 0 0;
+      padding: 16px 20px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      transform: translateY(100%);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.5);
+    }
+    .modal-backdrop.active .bottom-sheet {
+      transform: translateY(0);
+    }
+
+    .sheet-handle {
+      width: 40px;
+      height: 4px;
+      border-radius: 2px;
+      background: rgba(255, 255, 255, 0.2);
+      margin: 0 auto 4px;
+    }
+
+    .sheet-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .sheet-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #FFFFFF;
+    }
+    .btn-sheet-close {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      border-radius: 50%;
+      width: 26px;
+      height: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    .btn-sheet-close:hover { color: #FFFFFF; }
+
+    /* ─── Phantom Floating Toast ─────────────────────────── */
+    .phantom-toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: rgba(23, 30, 45, 0.95);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #FFFFFF;
+      padding: 8px 18px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 600;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+      z-index: 100;
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .phantom-toast.show {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    footer {
+      padding: 10px 16px;
+      border-top: 1px solid var(--border-subtle);
+      font-size: 10px;
+      color: var(--text-dim);
+      text-align: center;
+      background: var(--bg-surface);
+      letter-spacing: 0.3px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <svg class="brand-logo" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="sg" x1="50" y1="8" x2="50" y2="92" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#38BDF8"/>
+            <stop offset="100%" stop-color="#10B981"/>
+          </linearGradient>
+        </defs>
+        <path d="M50 8 L88 26 L88 52 C88 72 72 88 50 95 C28 88 12 72 12 52 L12 26 Z"
+              stroke="url(#sg)" stroke-width="6" fill="#0B0E17" stroke-linejoin="round"/>
+        <path d="M50 16 L82 31 L82 52 C82 68 68 82 50 88 C32 82 18 68 18 52 L18 31 Z"
+              fill="url(#sg)" opacity="0.2"/>
+        <rect x="37" y="47" width="26" height="21" rx="4" fill="#FFFFFF"/>
+        <path d="M42 47 V39 C42 34 45.5 30 50 30 C54.5 30 58 34 58 39 V47"
+              stroke="#FFFFFF" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+        <circle cx="50" cy="55" r="2.8" fill="#0B0E17"/>
+        <rect x="48.8" y="56" width="2.4" height="5" rx="1" fill="#0B0E17"/>
+      </svg>
+      <div>
+        <div class="brand-title">
+          AntiDrain
+          <span class="brand-badge">EIP-7702</span>
+        </div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <select id="chainSelect" class="network-pill">
+        <option value="8453">Base</option>
+        <option value="42161">Arbitrum</option>
+        <option value="1">Ethereum</option>
+        <option value="10">Optimism</option>
+        <option value="137">Polygon</option>
+        <option value="5000">Mantle</option>
+      </select>
+      <button id="btnLockTop" class="btn-icon" title="Lock Vault">🔒</button>
+    </div>
+  </header>
+
+  <main id="mainContainer">
+    <div style="text-align: center; padding: 60px 0; color: var(--text-dim);">
+      Connecting to AntiDrain Vault…
+    </div>
+  </main>
+
+  <!-- Phantom-Style Slide-Up Bottom Sheet -->
+  <div id="modalBackdrop" class="modal-backdrop">
+    <div class="bottom-sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-header">
+        <div id="modalTitle" class="sheet-title">Configure Wallet</div>
+        <button id="modalClose" class="btn-sheet-close">&times;</button>
+      </div>
+      <div id="modalBody" style="display: flex; flex-direction: column; gap: 12px;">
+        <!-- Injected dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Phantom-Style Floating Toast (NO browser alerts) -->
+  <div id="toast" class="phantom-toast">
+    <span id="toastIcon">✓</span>
+    <span id="toastMsg">Notification</span>
+  </div>
+
+  <footer>
+    Client Enclave · AES-256-GCM Vault · Zero Public Mempool
+  </footer>
+
+  <script src="popup.js"></script>
+</body>
+</html>

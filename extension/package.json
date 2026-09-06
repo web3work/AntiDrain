@@ -1,0 +1,16 @@
+{
+  "name": "antidrain-extension",
+  "version": "1.0.0",
+  "description": "AntiDrain Thin Browser Companion",
+  "type": "module",
+  "scripts": {
+    "build": "tsc && node scripts/bundle-audit.js",
+    "bundle-audit": "node scripts/bundle-audit.js"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/chrome": "^0.0.280",
+    "@types/node": "^22.10.0",
+    "typescript": "^5.7.0"
+  }
+}

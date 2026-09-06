@@ -1,0 +1,54 @@
+# Dependencies
+node_modules/
+cli/node_modules/
+extension/node_modules/
+
+# Build outputs
+cli/dist/
+extension/dist/
+extension/store-package/
+extension/background/
+extension/content/
+extension/core/
+extension/inpage/
+extension/popup/*.js
+extension/popup/*.d.ts
+extension/popup/*.html
+extension/rescue/
+extension/shared/
+extension/signer/
+extension/vault/
+contracts/out/
+contracts/cache/
+
+# Compiled artifacts
+*.d.ts
+!extension/src/types/chrome.d.ts
+
+# Packaged archives
+*.zip
+*.exe
+*.bat
+*.cs
+
+# Environment & Private Keys (NEVER commit real keys)
+.env
+.env.*
+cli/.env
+*.vault
+vault.json
+*.pem
+*.key
+*.native_host.json
+
+# Internal
+audits/
+scratch/
+*.log
+canary_evidence.json
+
+# OS & Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

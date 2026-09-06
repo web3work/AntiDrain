@@ -1,0 +1,30 @@
+{
+  "name": "antidrain-wallet-cli",
+  "version": "1.0.0",
+  "description": "EIP-7702 wallet rescue CLI — claim airdrops and sweep assets from compromised wallets",
+  "private": true,
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsx src/index.ts",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "chalk": "^5.4.0",
+    "commander": "^13.0.0",
+    "dotenv": "^17.4.2",
+    "inquirer": "^12.0.0",
+    "ora": "^8.2.0",
+    "viem": "^2.55.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "playwright": "^1.62.1",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0",
+    "vitest": "^3.0.0"
+  }
+}
